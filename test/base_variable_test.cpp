@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../include/variable/base_variables.h"
+#include "../include/error/base_error.h"
 using namespace std;
 
 
