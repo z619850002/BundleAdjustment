@@ -82,6 +82,19 @@ public:
 	}
 
 
+	//Getter.
+	inline Eigen::VectorXd GetVariable(){
+		return this->m_mVariable;
+	}
+
+	inline int GetDimension(){
+		return this->m_nDimension;
+	}
+
+
+
+
+
 	//Override the output operators.
 	friend ostream &operator<<( ostream & iOutput, const OptimizedVariable & iVariable )
 	{
