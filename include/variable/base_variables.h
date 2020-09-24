@@ -92,7 +92,13 @@ public:
 	}
 
 
+	inline int GetID(){
+		return this->m_nVertexID;
+	}
 
+	inline void SetID(int nNewID){
+		this->m_nVertexID = nNewID;
+	}
 
 
 	//Override the output operators.
@@ -103,7 +109,9 @@ public:
 	}
 
 
-private:
+protected:
+	int m_nVertexID;
+
 	Eigen::VectorXd m_mVariable;
 	int m_nDimension;
 };

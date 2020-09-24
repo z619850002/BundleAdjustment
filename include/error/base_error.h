@@ -40,6 +40,21 @@ public:
 		return nDim;
 	}
 
+
+	inline vector<Eigen::MatrixXd> GetJacobians(){
+		return this->m_gJacobians;
+	}
+
+	inline int GetID(){
+		return this->m_nEdgeID;
+	}
+
+	inline void SetID(int nNewID){
+		this->m_nEdgeID = nNewID;
+	}
+
+
+
 	//The error may be multi-value.
 	//This is a pure virtual function.
 	virtual Eigen::VectorXd ComputeError() = 0;
@@ -47,16 +62,23 @@ public:
 	//The jacobian type should be checked.
 	virtual bool ComputeJacobian() = 0;
 
+
 	
-private:
-	//Store all variables
+protected:
+	int m_nEdgeID;
+
+	//Store all variables.
 	vector<OptimizedVariable *> m_gVariables;
 
-	Eigen::MatrixXd m_mJacobian;
+	//The merged jacobian.
+	vector<Eigen::MatrixXd> m_gJacobians;
+
 
 	int m_nVariableDimension;
 	int m_nErrorDimension;
-	
+
+	Eigen::VectorXd m_mErrorVec;
+
 };
 
 
