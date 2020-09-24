@@ -39,8 +39,8 @@ public:
 	//Override the output operators.
 	friend ostream &operator<<( ostream & iOutput, const OptimizedVariable & iVariable )
 	{
-		output << iVariable.m_mVariable;
-		return output;            
+		iOutput << iVariable.m_mVariable;
+		return iOutput;            
 	}
 
 private:
