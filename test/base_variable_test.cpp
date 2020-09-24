@@ -21,5 +21,12 @@ int main(){
 	cout << "iVariable3 is: " << endl << iVariable3 << endl;
 
 
+	iVariable3.SetVariable(mVec2);
+	iVariable2.SetVariable(mInitialMat);
+
+	cout << "iVariable3 is: " << endl << iVariable3 << endl;
+	cout << "iVariable2 is: " << endl << iVariable2 << endl;
+
+
 	return 0;
 }

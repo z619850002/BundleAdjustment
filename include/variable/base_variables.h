@@ -40,7 +40,7 @@ public:
 	//Overrided constructor. Construct the variable with an cv mat.
 	OptimizedVariable(cv::Mat mVectorCV){
 		if (mVectorCV.cols != 1){
-			cerr << "Warning:Wrong shape for the opencv matrix. It must be a vector. This first column will be used in the initialization. But if there is no data in the input matrix, something wrong may happen." << endl;
+			cerr << "Warning:Wrong shape for the opencv matrix. It must be a vector. The first column will be used in the initialization. But if there is no data in the input matrix, something wrong may happen." << endl;
 			
 		}
 		Eigen::MatrixXd mMatEigen;
@@ -51,16 +51,7 @@ public:
 	}
 
 
-
-
-	bool SetVariable(Eigen::VectorXd mNewVariable){
-		if (mNewVariable.size() == this->m_mVariable.size()){
-			this->m_mVariable = mNewVariable;
-			return true;
-		}
-		return false;
-	}
-
+	//Update function.
 	virtual bool Update(Eigen::VectorXd mUpdate){
 		//Check if the shape of the optimized variables 
 		//is same to the incremental variable.
@@ -70,6 +61,26 @@ public:
 		}
 		return false;
 	};
+
+
+
+	//Getter and Setter. It's worth mentioning that the setter will cover the original shape.
+	bool SetVariable(Eigen::VectorXd mNewVariable){
+		this->m_mVariable = mNewVariable;
+		this->m_nDimension = mNewVariable.size();
+		return true;
+	}
+
+	bool SetVariable(cv::Mat mNewVariable_CV){
+		if (mNewVariable_CV.cols != 1){
+			cerr << "Warning:Wrong shape for the opencv matrix. It must be a vector. The first column will be used in the initialization. But if there is no data in the input matrix, something wrong may happen." << endl;
+		}
+		cv::Mat mFirstColumn = mNewVariable_CV.col(0);
+		cv::cv2eigen(mFirstColumn, this->m_mVariable);
+		this->m_nDimension = this->m_mVariable.size();
+		return true;
+	}
+
 
 	//Override the output operators.
 	friend ostream &operator<<( ostream & iOutput, const OptimizedVariable & iVariable )
