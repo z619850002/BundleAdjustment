@@ -24,12 +24,16 @@ public:
 		this->m_nVariableDimension = this->GetVariableDimension();
 	}
 
-	OptimizedVariable * GetVariable(int nIndex){
+	inline OptimizedVariable * GetVariable(int nIndex){
 		if (nIndex >= this->m_gVariables.size() || nIndex < 0){
 			cerr << "Wrong index when finding the variable in the error term" << endl;
 			return nullptr;
 		}
 		return this->m_gVariables[nIndex];
+	}
+
+	inline vector<OptimizedVariable *> GetVariables(){
+		return this->m_gVariables;
 	}
 
 	inline int GetVariableDimension(){
@@ -51,6 +55,10 @@ public:
 
 	inline void SetID(int nNewID){
 		this->m_nEdgeID = nNewID;
+	}
+
+	inline int GetErrorDimension(){
+		return this->m_nErrorDimension;
 	}
 
 
