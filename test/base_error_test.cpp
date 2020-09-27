@@ -141,7 +141,7 @@ int main(){
 	// iOptimizer.GenerateJacobianMatrix();
 	// iOptimizer.GenerateErrorVector();
 
-	iOptimizer.Optimize(3);
+	iOptimizer.Optimize(100);
 
 
 	cout << "After optimization: " << endl;
