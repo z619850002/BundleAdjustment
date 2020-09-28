@@ -24,6 +24,22 @@ public:
 	{
 		this->SetPose(mT);
 	}
+
+	//Override the update function.
+	virtual bool Update(Eigen::VectorXd mUpdate){
+		//Check if the shape of the optimized variables 
+		//is same to the incremental variable.
+		if (mUpdate.size() != 6){
+			cout << "'Wrong incremental variable for the lie algebra." << endl;
+			return false;
+		}
+		Sophus::SE3 mIncrementalVector = Sophus::SE3::exp(mUpdate);
+		Sophus::SE3 mUpdatedPose = Sophus::SE3::exp(this->m_mVariable) * mIncrementalVector;
+		this->m_mVariable = mUpdatedPose.log();
+		return true;	
+	};
+
+
 	
 	//Convert matrix pose to lie pose.
 	bool SetPose(cv::Mat mT){
@@ -103,7 +119,10 @@ public:
 		return this->SetVariable(mLieEigen);
 	}
 
-	
+	Eigen::Matrix4d GetPoseMatrix(){
+		Eigen::Matrix4d mPoseMatrix = Sophus::SE3::exp(this->m_mVariable).matrix();
+		return mPoseMatrix;
+	}
 };
 
 

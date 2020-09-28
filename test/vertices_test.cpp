@@ -1,6 +1,6 @@
 #include "../include/ba_types/vertices/point3d.h"
 #include "../include/ba_types/vertices/pose_lie.h"
-
+#include "../include/ba_types/edges/ba_reprojection_error.h"
 
 using namespace std;
 
@@ -20,6 +20,14 @@ int main(){
 	Point3DVertex iPointVertex;
 	iPointVertex.SetPoint(iPoint);
 	cout << "Point is: " << endl << iPointVertex << endl;
+
+	Eigen::VectorXd mUpdated(6);
+	mUpdated << 0.01 , -0.01 , 0.01 , -0.01 , 0.01 , -0.01;
+	iVertex.Update(mUpdated);
+
+
+	cout << "Updated Vertex is: " << endl << iVertex << endl;
+
 
 	return 0;
 }

@@ -53,6 +53,9 @@ public:
 
 	//Update function.
 	virtual bool Update(Eigen::VectorXd mUpdate){
+		if (m_bFixed){
+			return true;
+		}
 		//Check if the shape of the optimized variables 
 		//is same to the incremental variable.
 		if (mUpdate.size() == this->m_mVariable.size()){
@@ -109,11 +112,18 @@ public:
 	}
 
 
+	void SetFixed(bool bFixed){
+		this->m_bFixed = bFixed;
+	}
+
+
 protected:
 	int m_nVertexID;
 
 	Eigen::VectorXd m_mVariable;
 	int m_nDimension;
+
+	bool m_bFixed;
 };
 
 

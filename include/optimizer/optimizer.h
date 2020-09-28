@@ -69,12 +69,18 @@ public:
 			this->GenerateJacobianMatrix();
 			//Secondly compute the error.
 			this->GenerateErrorVector();
+			// cout << "Error is: " << this->m_mError.transpose() * this->m_mError << endl;
 
 			Eigen::MatrixXd mH = this->m_mJacobian.transpose() * this->m_mJacobian;
+			
+			// cout << "Error is: " << endl << this->m_mError << endl;
+			
 			Eigen::VectorXd mG = -this->m_mJacobian.transpose() * this->m_mError;
-
 			Eigen::VectorXd mDelta = mH.inverse() * mG;
 
+			// cout << "Hessian is: " << endl << mH.inverse().diagonal().transpose() << endl;
+			// cout << "mH det is: " << mH.inverse().determinant() << endl;
+			// cout << "Delta is: " << endl << mDelta.transpose() << endl;
 			//Update.
 			this->Update(mDelta);
 
@@ -92,6 +98,7 @@ public:
 public:
 
 	bool inline GenerateJacobianMatrix(){
+		this->m_mJacobian *=0;
 		for (map<int, BaseErrorTerm *>::iterator pIterator = this->m_mEdges.begin(); 
 				pIterator != this->m_mEdges.end(); 
 				pIterator++){
@@ -111,7 +118,7 @@ public:
 										pVertexBlock->m_nDimension) = mJacobian;
 			}
 		}
-		cout << "Jacobian is: " << endl << this->m_mJacobian << endl;
+		// cout << "Jacobian is: " << endl << this->m_mJacobian << endl;
 		return true;
 	}
 
@@ -125,7 +132,7 @@ public:
 			Block * pEdgeBlock = m_mEdgePositions[pErrorTerm];
 			this->m_mError.segment(pEdgeBlock->m_nStartPos, pEdgeBlock->m_nDimension) = mError;
 		}
-		cout << "Error is: " << endl << this->m_mError << endl;
+		// cout << "Error is: " << endl << this->m_mError << endl;
 		return true;
 	}
 
@@ -180,6 +187,9 @@ public:
 
 		this->m_mJacobian = Eigen::MatrixXd(nTotalErrorDimension, nTotalVariableDimension);	
 		this->m_mError = Eigen::VectorXd(nTotalErrorDimension);
+
+		// cout << "Jacobian shape is: " << this->m_mJacobian.rows() << "," << this->m_mJacobian.cols() << endl;
+		// cout << "Error shape is: " << this->m_mError.rows() << "," << this->m_mError.cols() << endl;
 	}
 
 
