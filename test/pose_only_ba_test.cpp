@@ -151,6 +151,10 @@ int main(){
 
 	vector<Point3DVertex *> gVertices3D;
 
+	//Random number generator.
+	cv::RNG iGenerator;
+    	
+
 	//Create edge and vertices.
 	for (int i=0;i<gPoints3d.size();i++){
 		int nIndex = i+5;
@@ -158,6 +162,15 @@ int main(){
 
     	//Create the vertex of 3D point.
     	cv::Point3d iPoint3d = gPoints3d[i];
+    	
+		double nNoise1 = iGenerator.gaussian(0.01);
+		double nNoise2 = iGenerator.gaussian(0.01);
+		double nNoise3 = iGenerator.gaussian(0.01);
+
+		iPoint3d.x = iPoint3d.x + nNoise1;
+		iPoint3d.y = iPoint3d.y + nNoise2;
+		iPoint3d.z = iPoint3d.z + nNoise3;
+
     	Point3DVertex * pPointVertex = new Point3DVertex(iPoint3d);
     	
     	
@@ -169,6 +182,7 @@ int main(){
     			 										 gPoints2d_1[i], 
     			 										 mK1);
     	pEdge1->SetID(nIndexEdge1);
+    	pEdge1->SetInformationMatrix(Eigen::Matrix2d::Identity());
     	iOptimizer.AddEdge(pEdge1);
 
 
@@ -177,13 +191,6 @@ int main(){
 
 	// cout << "Point size is: " << gPoints3d.size() << endl;
 	iOptimizer.InitializeOptimziation();
-
-
-	// for (auto item : gVertices3D){
-	// 	Block2D iBlock = *iOptimizer.GetBlock(gEdges[0], item);
-	// 	cout << "Block is: " << endl << iBlock.m_nStartRow << " " << iBlock.m_nStartCol << " " << iBlock.m_nRows << " " << iBlock.m_nCols << " " << endl;
-	// }
-
 
 
 

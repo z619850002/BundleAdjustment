@@ -16,6 +16,11 @@ public:
 		:m_nErrorDimension(nErrorDim)
 	{
 		this->m_nVariableDimension = this->GetVariableDimension();
+		this->m_mInformationMatrix = Eigen::MatrixXd(nErrorDim, nErrorDim);
+		this->m_mInformationMatrix *=0;
+		for (int i=0;i<nErrorDim;i++){
+			this->m_mInformationMatrix(i,i) = 1;
+		}
 	}
 
 	bool AddVariable(OptimizedVariable * pVariable){
@@ -62,6 +67,20 @@ public:
 	}
 
 
+	inline bool SetInformationMatrix(Eigen::MatrixXd mInformationMatrix){
+		if (mInformationMatrix.rows() != this->m_nErrorDimension || 
+			mInformationMatrix.cols() != this->m_nErrorDimension)
+		{
+			cerr << "Wrong dimension of the information matrix" << endl;
+		}
+		this->m_mInformationMatrix = mInformationMatrix;
+		return true;
+	}
+
+	inline Eigen::MatrixXd GetInformationMatrix(){
+		return this->m_mInformationMatrix;
+	}
+
 
 	//The error may be multi-value.
 	//This is a pure virtual function.
@@ -69,7 +88,6 @@ public:
 
 	//The jacobian type should be checked.
 	virtual bool ComputeJacobian() = 0;
-
 
 	
 protected:
@@ -86,6 +104,9 @@ protected:
 	int m_nErrorDimension;
 
 	Eigen::VectorXd m_mErrorVec;
+
+
+	Eigen::MatrixXd m_mInformationMatrix;
 
 };
 

@@ -69,13 +69,13 @@ public:
 			this->GenerateJacobianMatrix();
 			//Secondly compute the error.
 			this->GenerateErrorVector();
-			// cout << "Error is: " << this->m_mError.transpose() * this->m_mError << endl;
+			cout << "Error is: " << this->m_mError.transpose() * this->m_mError << endl;
 
-			Eigen::MatrixXd mH = this->m_mJacobian.transpose() * this->m_mJacobian;
+			Eigen::MatrixXd mH = this->m_mJacobian.transpose() * this->m_mInformationMatrix * this->m_mJacobian;
 			
 			// cout << "Error is: " << endl << this->m_mError << endl;
 			
-			Eigen::VectorXd mG = -this->m_mJacobian.transpose() * this->m_mError;
+			Eigen::VectorXd mG = -this->m_mJacobian.transpose() * this->m_mInformationMatrix * this->m_mError;
 			Eigen::VectorXd mDelta = mH.inverse() * mG;
 
 			// cout << "Hessian is: " << endl << mH.inverse().diagonal().transpose() << endl;
@@ -88,14 +88,22 @@ public:
 		return true;
 	}
 
+
 	bool InitializeOptimziation(){
-		this->ManageMatrixShape();
-		return true;
+		bool bCondition1 = this->ManageMatrixShape();
+		bool bCondition2 = this->GenerateInformationMatrix();
+		return bCondition1 && bCondition2;
 	}
 
 
 
 public:
+
+
+	// Eigen::MatrixXd ComputeMarginals(){
+	// 	this->GenerateInformationMatrix();
+	// }
+
 
 	bool inline GenerateJacobianMatrix(){
 		this->m_mJacobian *=0;
@@ -121,6 +129,31 @@ public:
 		// cout << "Jacobian is: " << endl << this->m_mJacobian << endl;
 		return true;
 	}
+
+
+	bool inline GenerateInformationMatrix(){
+		this->m_mInformationMatrix *=0;
+		for (map<int, BaseErrorTerm *>::iterator pIterator = this->m_mEdges.begin(); 
+				pIterator != this->m_mEdges.end(); 
+				pIterator++){
+			BaseErrorTerm * pErrorTerm = pIterator->second;
+			pErrorTerm->ComputeJacobian();
+			Block * pEdgeBlock = m_mEdgePositions[pErrorTerm];
+			int nStartPos = pEdgeBlock->m_nStartPos;
+			int nDimension = pEdgeBlock->m_nDimension;
+			Eigen::MatrixXd mLocalInformationMatrix = pErrorTerm->GetInformationMatrix();
+			if (mLocalInformationMatrix.rows() != nDimension || mLocalInformationMatrix.cols() != nDimension){
+				cerr << "Wrong information matrix dimension when generate the huge matrix!" << endl;
+				return false;
+			}
+			this->m_mInformationMatrix.block(nStartPos, nStartPos, nDimension, nDimension) = mLocalInformationMatrix;
+		}
+		// cout << "Jacobian is: " << endl << this->m_mJacobian << endl;
+		return true;
+	}
+
+
+
 
 	//Compute the error.
 	bool inline GenerateErrorVector(){
@@ -187,6 +220,7 @@ public:
 
 		this->m_mJacobian = Eigen::MatrixXd(nTotalErrorDimension, nTotalVariableDimension);	
 		this->m_mError = Eigen::VectorXd(nTotalErrorDimension);
+		this->m_mInformationMatrix = Eigen::MatrixXd(nTotalErrorDimension, nTotalErrorDimension);
 
 		// cout << "Jacobian shape is: " << this->m_mJacobian.rows() << "," << this->m_mJacobian.cols() << endl;
 		// cout << "Error shape is: " << this->m_mError.rows() << "," << this->m_mError.cols() << endl;
@@ -206,6 +240,8 @@ public:
 
 	Eigen::MatrixXd m_mJacobian;
 	Eigen::VectorXd m_mError;
+
+	Eigen::MatrixXd m_mInformationMatrix;
 
 };
 
